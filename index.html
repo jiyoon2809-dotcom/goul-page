@@ -507,7 +507,11 @@ render();fit();
  function send(){var h=Math.ceil(document.body.getBoundingClientRect().height);if(h&&h!==last){last=h;parent.postMessage({t:'goul-h',h:h},'*')}}
  if(window.ResizeObserver)new ResizeObserver(send).observe(document.body);
  addEventListener('load',send);addEventListener('resize',send);setInterval(send,800);send();
- addEventListener('message',function(e){var d=e.data;if(d&&d.t==='goul-vp'){R.style.setProperty('--vt',d.top+'px');R.style.setProperty('--vh',d.h+'px')}});
+ var linked=false,dbg=null;
+ if(location.hash==='#debug'){dbg=document.createElement('div');dbg.style.cssText='position:absolute;left:6px;top:6px;z-index:99999;background:#e0414b;color:#fff;font:700 15px/1.4 sans-serif;padding:8px 12px;border-radius:8px;white-space:pre';document.body.appendChild(dbg)}
+ function paint(){if(!dbg)return;dbg.textContent='높이 '+last+'px\n화면폭 '+innerWidth+'px\n부모 스크립트: '+(linked?'연결됨':'응답 없음')}
+ setInterval(paint,500);
+ addEventListener('message',function(e){var d=e.data;if(d&&d.t==='goul-vp'){linked=true;R.style.setProperty('--vt',d.top+'px');R.style.setProperty('--vh',d.h+'px')}});
  window.scrollTo=function(o){var y=(o&&typeof o==='object')?(o.top||0):(arguments[1]||0);parent.postMessage({t:'goul-scroll',y:y},'*')};
 })();
 </script>
