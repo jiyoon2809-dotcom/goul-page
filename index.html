@@ -95,7 +95,7 @@ section{padding:0 24px;margin-top:80px}
 .foot{padding:0 24px;margin-top:64px;font-size:14px;color:var(--sub);line-height:1.8}
 .foot b{color:var(--blue);font-weight:500;margin-right:10px}
 .row.f{height:44px}.row b.v{max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
-.img{position:relative;overflow:hidden}.img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;background:#000}#rimg img{object-fit:contain;object-position:center;background:#fff}#rimg:has(>img){background:#fff}
+.img{position:relative;overflow:hidden}.img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;background:#000}#rimg img,#rimg video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;background:#fff;cursor:zoom-in}#rimg:has(>img),#rimg:has(>video){background:#fff}#lb video{max-width:94vw;max-height:92vh;object-fit:contain;background:#fff}
 .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#8b92a3;cursor:pointer}
 .ar{position:absolute;top:50%;margin-top:-24px;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.92);color:#0d0f14;font-size:30px;line-height:1;z-index:2}
 .ar.l{left:20px}.ar.r{right:20px}
@@ -598,7 +598,7 @@ let px=0;$('#pimg').ontouchstart=e=>{px=e.touches[0].clientX};
 $('#pimg').ontouchend=e=>{const dx=e.changedTouches[0].clientX-px;if(Math.abs(dx)>40)pfGo(pi+(dx<0?1:-1))};
 pfR();
 let LBS=null,lx=0;
-function lbR(){const it=LBS.arr[LBS.idx()];$('#lbc').innerHTML=it.s?`<img src="${it.s}" alt="">`:`<div class="lph">${LBS.l}</div>`;$('#lbn').textContent=(LBS.idx()+1)+' / '+LBS.arr.length}
+function lbR(){const it=LBS.arr[LBS.idx()];$('#lbc').innerHTML=it.s?(/\.mp4$/.test(it.s)?`<video src="${it.s}" autoplay muted loop playsinline controls></video>`:`<img src="${it.s}" alt="">`):`<div class="lph">${LBS.l}</div>`;$('#lbn').textContent=(LBS.idx()+1)+' / '+LBS.arr.length}
 function lb(w){LBS=w=='rig'?{arr:RIG,idx:()=>ri,go:rigGo,l:'GIF'}:{arr:PF,idx:()=>pi,go:pfGo,l:'IMAGE'};lbR();$('#lb').hidden=false}
 function lbx(){$('#lb').hidden=true}
 function lbGo(d){LBS.go(LBS.idx()+d);lbR()}
@@ -645,14 +645,14 @@ B('포트폴리오 공개',['완성작뿐 아니라 작업 중인 결과물 역�
 ['09','환불 안내','REFUND',[B('일러스트',['-입금(예약) 후 ~ 스케치 착수 전: 90% 환불','-스케치 착수 ~ 채색 착수 전: 75% 환불','-채색 작업이 시작된 후에는 환불이 불가합니다.']),
 B('일러스트 + 리깅',['-입금(예약) 후 ~ 스케치 착수 전: 90% 환불','-스케치 착수 ~ 채색 착수 전: 75% 환불','-채색 착수 ~ 리깅 착수 전: 일러스트 금액은 환불 불가, 리깅 금액은 90% 환불','-리깅 착수 ~ 얼굴 작업 완료 전(눈 깜빡임, 입 모양 등): 리깅 금액의 50% 환불','-얼굴 작업이 완료된 후에는 환불이 불가합니다.','#환불 금액은 실제 결제 금액을 기준으로 하며, 리깅 금액은 일러스트 + 리깅 금액에서 같은 범위의 일러스트 단독 금액을 뺀 금액입니다.'])]]];
 document.getElementById('more').innerHTML=SEC.map(s=>`<section><div class="hd"><h2><sup>${s[0]}</sup>${s[1]}</h2><span>${s[2]}</span></div><div class="bk${s[3].length==1?' one':''}">${s[3].join('')}</div></section>`).join('')+'';document.getElementById('applyslot').innerHTML=`<div class="hd" style="margin-top:80px"><h2><sup>05</sup>신청 양식</h2><span>APPLY</span></div><div class="bc form"><label>1. 방송 닉네임 / 플랫폼 / 데뷔 예정 시기</label><small>기업 소속이라면 함께 기재해 주세요<br>방송용이 아니라서 해당 사항이 없다면 '기재 X'라고 적어 주세요</small><textarea></textarea><label>2. 캐릭터 특징 (체형 / 성격 / 분위기 / RP / 방송 스타일 등)</label><small>※ 겉보기 성별·나이대는 반드시 기재해 주세요.<br>※ 문의하실 때 참고 이미지를 <b style="color:var(--blue)">반드시 첨부</b>해 주세요.</small><textarea style="height:160px"></textarea><label>3. 요청 · 추가 문의 사항</label><small>예) 비공개 요청, 추가하고 싶은 파츠 등</small><textarea></textarea><p class="notice" style="margin:14px 0 0;text-align:center"><b style="color:var(--blue)">오픈 기념 20% 할인 진행 중!</b> (추가 옵션 제외)<br>편하게 문의해 주세요 :D 확인하는 대로 최대한 빨리 답변드릴게요!</p></div>`;
-const RIG=[{t:'얼굴 XY축',d:'얼굴 XY축 (45도)',s:'assets/rig01.webp'},{t:'얼굴 Z축',d:'얼굴 Z축 (45도)',s:'assets/rig02.webp'},{t:'몸 XYZ축',d:'몸 XYZ축 (45도)',s:''},{t:'얼굴 페이셜',d:'눈썹 상하 움직임 및 변형(화남/슬픔) · 눈 깜빡임 및 눈 미소 · 입모양 9점',s:''},{t:'기본 표정 4종',d:'발그레 / 정색 / 하트눈 / 반짝눈',s:''},{t:'물리효과',d:'머리카락 / 눈(표정) / 의상 / 가슴 / 장식 / 호흡',s:''}];
+const RIG=[{t:'얼굴 XY축',d:'얼굴 XY축 (45도)',s:'assets/rig01.mp4'},{t:'얼굴 Z축',d:'얼굴 Z축 (45도)',s:'assets/rig02.mp4'},{t:'몸 XYZ축',d:'몸 XYZ축 (45도)',s:''},{t:'얼굴 페이셜',d:'눈썹 상하 움직임 및 변형(화남/슬픔) · 눈 깜빡임 및 눈 미소 · 입모양 9점',s:''},{t:'기본 표정 4종',d:'발그레 / 정색 / 하트눈 / 반짝눈',s:''},{t:'물리효과',d:'머리카락 / 눈(표정) / 의상 / 가슴 / 장식 / 호흡',s:''}];
 let ri=0,rx=0;
 function rigR(){const r=RIG[ri];
 $('#rl').innerHTML=RIG.map((x,i)=>`<button class="${i==ri?'on':''}" data-i="${i}"><small>RIG 0${i+1}</small><b>${x.t}</b></button>`).join('');
-$('#rimg').innerHTML=(r.s?`<img src="${r.s}" alt="${r.t}">`:`<div class="ph" id="rph">GIF</div>`)+`<button class="ar l" data-d="-1" aria-label="이전">‹</button><button class="ar r" data-d="1" aria-label="다음">›</button><div class="dts">${RIG.map((_,i)=>`<i class="${i==ri?'on':''}" data-i="${i}"></i>`).join('')}</div>`}
+$('#rimg').innerHTML=(r.s?(/\.mp4$/.test(r.s)?`<video src="${r.s}" autoplay muted loop playsinline preload="auto" aria-label="${r.t}"></video>`:`<img src="${r.s}" alt="${r.t}">`):`<div class="ph" id="rph">GIF</div>`)+`<button class="ar l" data-d="-1" aria-label="이전">‹</button><button class="ar r" data-d="1" aria-label="다음">›</button><div class="dts">${RIG.map((_,i)=>`<i class="${i==ri?'on':''}" data-i="${i}"></i>`).join('')}</div>`}
 function rigGo(n){ri=(n+RIG.length)%RIG.length;rigR()}
 $('#rl').onclick=e=>{const b=e.target.closest('button');if(b)rigGo(+b.dataset.i)};
-$('#rimg').onclick=e=>{const a=e.target.closest('.ar'),d=e.target.closest('.dts i');if(a)rigGo(ri+ +a.dataset.d);else if(d)rigGo(+d.dataset.i);else if(e.target.id=='rph'||e.target.tagName=='IMG')lb('rig')};
+$('#rimg').onclick=e=>{const a=e.target.closest('.ar'),d=e.target.closest('.dts i');if(a)rigGo(ri+ +a.dataset.d);else if(d)rigGo(+d.dataset.i);else if(e.target.id=='rph'||e.target.tagName=='IMG'||e.target.tagName=='VIDEO')lb('rig')};
 $('#rimg').ontouchstart=e=>{rx=e.touches[0].clientX};
 $('#rimg').ontouchend=e=>{const dx=e.changedTouches[0].clientX-rx;if(Math.abs(dx)>40)rigGo(ri+(dx<0?1:-1))};
 rigR();
