@@ -95,7 +95,7 @@ section{padding:0 24px;margin-top:80px}
 .foot{padding:0 24px;margin-top:64px;font-size:14px;color:var(--sub);line-height:1.8}
 .foot b{color:var(--blue);font-weight:500;margin-right:10px}
 .row.f{height:44px}.row b.v{max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
-.img{position:relative;overflow:hidden}.img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;background:#000}#rimg img,#rimg video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;background:#fff;cursor:zoom-in}#rimg:has(>img),#rimg:has(>video){background:#fff}#lb video{max-width:94vw;max-height:92vh;object-fit:contain;background:#fff}
+.img{position:relative;overflow:hidden}.img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;background:#000}#rimg img,#rimg video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;background:#fff;cursor:zoom-in}#rimg:has(>img),#rimg:has(>video){background:#fff}#rl{overflow-y:auto;min-height:0}#rl button{flex:1 0 auto}#lb video{max-width:94vw;max-height:92vh;object-fit:contain;background:#fff}
 .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#8b92a3;cursor:pointer}
 .ar{position:absolute;top:50%;margin-top:-24px;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.92);color:#0d0f14;font-size:30px;line-height:1;z-index:2}
 .ar.l{left:20px}.ar.r{right:20px}
@@ -598,7 +598,7 @@ let px=0;$('#pimg').ontouchstart=e=>{px=e.touches[0].clientX};
 $('#pimg').ontouchend=e=>{const dx=e.changedTouches[0].clientX-px;if(Math.abs(dx)>40)pfGo(pi+(dx<0?1:-1))};
 pfR();
 let LBS=null,lx=0;
-function lbR(){const it=LBS.arr[LBS.idx()];$('#lbc').innerHTML=it.s?(/\.mp4$/.test(it.s)?`<video src="${it.s}" autoplay muted loop playsinline controls></video>`:`<img src="${it.s}" alt="">`):`<div class="lph">${LBS.l}</div>`;$('#lbn').textContent=(LBS.idx()+1)+' / '+LBS.arr.length}
+function lbR(){const it=LBS.arr[LBS.idx()];$('#lbc').innerHTML=it.n?mh(it.n,0,true):(it.s?`<img src="${it.s}" alt="">`:`<div class="lph">${LBS.l}</div>`);$('#lbn').textContent=(LBS.idx()+1)+' / '+LBS.arr.length}
 function lb(w){LBS=w=='rig'?{arr:RIG,idx:()=>ri,go:rigGo,l:'GIF'}:{arr:PF,idx:()=>pi,go:pfGo,l:'IMAGE'};lbR();$('#lb').hidden=false}
 function lbx(){$('#lb').hidden=true}
 function lbGo(d){LBS.go(LBS.idx()+d);lbR()}
@@ -638,23 +638,43 @@ $('#opts').onclick=e=>{const r=e.target.closest('.opt');if(!r)return;const i=+r.
 
 const B=(t,l,c)=>`<div class="bc"><h4>${t}</h4>${l.map(x=>x[0]=='#'?`<p class="n">${x.slice(1)}</p>`:x[0]=='!'?`<p class="s">${x.slice(1)}</p>`:x[0]=='-'?`<p class="i${c?' '+c:''}">${x.slice(1).replace(/(\d+%)/g,'<b>$1</b>')}</p>`:`<p>${x}</p>`).join('')}</div>`;
 const SEC=[
-['06','리깅 포함 목록','RIGGING',['<div class="port"><div class="pl" id="rl"></div><div class="img" id="rimg"></div></div><div class="bc" style="margin-top:12px"><h4>리깅 목록</h4><div class="inc"><div><b>얼굴 XY축</b><span>최대 45도까지 움직일 수 있습니다.</span></div><div><b>얼굴 Z축</b><span>최대 45도까지 움직일 수 있습니다.</span></div><div><b>몸 XYZ축</b><span>최대 45도까지 움직일 수 있습니다.</span></div><div><b>얼굴 페이셜</b><span>눈썹 상하 이동 · 변형 (화남 / 슬픔)<br>눈 깜빡임 · 눈 미소<br>입 모양 9점</span></div><div><b>기본 표정 4종</b><span>발그레 / 정색<br>하트눈 / 반짝눈</span></div><div><b>물리효과</b><span>머리카락 / 눈(표정) / 의상<br>가슴 / 장식 / 호흡</span></div></div></div>']],
+['06','리깅 포함 목록','RIGGING',['<div class="port"><div class="pl" id="rl"></div><div class="img" id="rimg"></div></div><div class="bc" style="margin-top:12px"><h4>리깅 목록</h4><div class="inc" id="rinc"></div></div>']],
 ['07','사용 범위','USAGE',[`<div class="bc"><h4>방송용 의뢰 기본 포함 사항</h4><p class="i">치지직·SOOP 등 방송 플랫폼 내 방송 송출 가능</p><p class="i">방송용 일러스트(프로필 이미지 등)와 팬아트 제작 가능</p><p class="i">방송에 쓰는 표·시트 제작을 위한 2차 가공 가능</p><p class="i x">원본의 특징을 크게 바꾸는 과도한 수정은 불가</p><p class="i x">AI 학습 및 AI 기반 저작물 생성 용도 사용 불가</p><p class="n">표에 없는 사용 범위는 사전에 문의해 주세요.</p></div><div class="bc"><h4>이용 범위 비교표</h4><table class="tbl"><tr><th>항목</th><th>저작권 구매 X</th><th>개인세</th><th>기업세</th></tr><tr><td>추가금</td><td>-</td><td>저작권 구매 필수</td><td>저작권 구매 필수 + 30%</td></tr>${[['방송 플랫폼 내 사용',1,1,1],['유튜브 송출/업로드',0,1,1],['굿즈 제작 및 판매',0,1,1],['타 작가 의뢰 · 3D 제작',0,1,1],['기업 사용',0,0,1],['모델 양도 · 재판매',0,'동의 시 가능','동의 시 가능']].map(r=>`<tr><td>${r[0]}</td>${r.slice(1).map(v=>v===1?'<td class="y">○</td>':v===0?'<td class="no">✕</td>':`<td>${v}</td>`).join('')}</tr>`).join('')}</table></div>`]],
 ['08','저작권 · 작업물 공개','COPYRIGHT',[B('저작권',['모든 작업물의 저작권은 작가(구울)에게 있습니다.','-모델을 양도·재판매하거나 AI 학습에 사용하는 것은 불가합니다.','-저작권을 구매하셨더라도 모델을 양도·재판매하려면 작가의 사전 동의가 필요하고, 재판매 금액은 최종 견적가를 초과할 수 없습니다.','-저작권을 구매하실 때는 저작재산권 양도 계약서를 작성하며, 작업 완료 후에 따로 구매하시는 것도 가능합니다. 금액은 추가 옵션에서 확인하실 수 있습니다.','#이 밖의 저작권 관련 내용은 별도로 문의해 주세요.']),
 B('포트폴리오 공개',['완성작뿐 아니라 작업 중인 결과물 역시 SNS·유튜브 등에 포트폴리오로 공개될 수 있습니다.','-데뷔 전 비공개 요청은 별도 비용 없이 가능합니다. 원하시면 미리 꼭 알려 주세요.','-데뷔 이후에도 비공개를 원하시는 경우 추가금 100,000원(데뷔 후 6개월 기준)이 발생하며, 추가 옵션에서 선택하실 수 있습니다.','#비공개 요청은 작업 시작 전에 전달해 주셔야 하고, 착수 이후에는 반영이 어려울 수 있습니다.'])]],
 ['09','환불 안내','REFUND',[B('일러스트',['-입금(예약) 후 ~ 스케치 착수 전: 90% 환불','-스케치 착수 ~ 채색 착수 전: 75% 환불','-채색 작업이 시작된 후에는 환불이 불가합니다.']),
 B('일러스트 + 리깅',['-입금(예약) 후 ~ 스케치 착수 전: 90% 환불','-스케치 착수 ~ 채색 착수 전: 75% 환불','-채색 착수 ~ 리깅 착수 전: 일러스트 금액은 환불 불가, 리깅 금액은 90% 환불','-리깅 착수 ~ 얼굴 작업 완료 전(눈 깜빡임, 입 모양 등): 리깅 금액의 50% 환불','-얼굴 작업이 완료된 후에는 환불이 불가합니다.','#환불 금액은 실제 결제 금액을 기준으로 하며, 리깅 금액은 일러스트 + 리깅 금액에서 같은 범위의 일러스트 단독 금액을 뺀 금액입니다.'])]]];
 document.getElementById('more').innerHTML=SEC.map(s=>`<section><div class="hd"><h2><sup>${s[0]}</sup>${s[1]}</h2><span>${s[2]}</span></div><div class="bk${s[3].length==1?' one':''}">${s[3].join('')}</div></section>`).join('')+'';document.getElementById('applyslot').innerHTML=`<div class="hd" style="margin-top:80px"><h2><sup>05</sup>신청 양식</h2><span>APPLY</span></div><div class="bc form"><label>1. 방송 닉네임 / 플랫폼 / 데뷔 예정 시기</label><small>기업 소속이라면 함께 기재해 주세요<br>방송용이 아니라서 해당 사항이 없다면 '기재 X'라고 적어 주세요</small><textarea></textarea><label>2. 캐릭터 특징 (체형 / 성격 / 분위기 / RP / 방송 스타일 등)</label><small>※ 겉보기 성별·나이대는 반드시 기재해 주세요.<br>※ 문의하실 때 참고 이미지를 <b style="color:var(--blue)">반드시 첨부</b>해 주세요.</small><textarea style="height:160px"></textarea><label>3. 요청 · 추가 문의 사항</label><small>예) 비공개 요청, 추가하고 싶은 파츠 등</small><textarea></textarea><p class="notice" style="margin:14px 0 0;text-align:center"><b style="color:var(--blue)">오픈 기념 20% 할인 진행 중!</b> (추가 옵션 제외)<br>편하게 문의해 주세요 :D 확인하는 대로 최대한 빨리 답변드릴게요!</p></div>`;
-const RIG=[{t:'얼굴 XY축',d:'얼굴 XY축 (45도)',s:'assets/rig01.mp4'},{t:'얼굴 Z축',d:'얼굴 Z축 (45도)',s:'assets/rig02.mp4'},{t:'몸 XYZ축',d:'몸 XYZ축 (45도)',s:''},{t:'얼굴 페이셜',d:'눈썹 상하 움직임 및 변형(화남/슬픔) · 눈 깜빡임 및 눈 미소 · 입모양 9점',s:''},{t:'기본 표정 4종',d:'발그레 / 정색 / 하트눈 / 반짝눈',s:''},{t:'물리효과',d:'머리카락 / 눈(표정) / 의상 / 가슴 / 장식 / 호흡',s:''}];
+/* ============================================================
+   리깅 목록  ─  항목 추가는 아래에 한 줄만 붙이면 끝!
+   ['제목','설명(줄바꿈은 <br>)'],
+   영상/움짤 파일은 순서대로 자동 연결돼요 (assets 폴더)
+     1번째 → assets/rig01.mp4   2번째 → assets/rig02.mp4 ...
+   mp4 / webp / gif 모두 가능, 파일이 없으면 'GIF' 자리표시로 보여요
+   ============================================================ */
+const RIG=[
+['얼굴 XY축','최대 45도까지 움직일 수 있습니다.'],
+['얼굴 Z축','최대 45도까지 움직일 수 있습니다.'],
+['몸 XYZ축','최대 45도까지 움직일 수 있습니다.'],
+['얼굴 페이셜','눈썹 상하 이동 · 변형 (화남 / 슬픔)<br>눈 깜빡임 · 눈 미소<br>입 모양 9점'],
+['기본 표정 4종','발그레 / 정색<br>하트눈 / 반짝눈'],
+['물리효과','머리카락 / 눈(표정) / 의상<br>가슴 / 장식 / 호흡']
+].map((x,i)=>({t:x[0],d:x[1],n:'rig'+String(i+1).padStart(2,'0')}));
+/* ===== 여기까지 ===== */
+const EXT=['mp4','webp','gif'];
+function mh(n,k,lb){const e=EXT[k],u='assets/'+n+'.'+e,a=' data-n="'+n+'" data-k="'+k+'" onerror="mf(this)"';return e=='mp4'?'<video src="'+u+'"'+a+' autoplay muted loop playsinline preload="auto"'+(lb?' controls':'')+'></video>':'<img src="'+u+'"'+a+' alt="">'}
+function mf(el){const n=el.dataset.n,k=+el.dataset.k+1,lb=!!el.closest('#lb');el.outerHTML=k>=EXT.length?(lb?'<div class="lph">GIF</div>':'<div class="ph" id="rph">GIF</div>'):mh(n,k,lb)}
+
 let ri=0,rx=0;
 function rigR(){const r=RIG[ri];
-$('#rl').innerHTML=RIG.map((x,i)=>`<button class="${i==ri?'on':''}" data-i="${i}"><small>RIG 0${i+1}</small><b>${x.t}</b></button>`).join('');
-$('#rimg').innerHTML=(r.s?(/\.mp4$/.test(r.s)?`<video src="${r.s}" autoplay muted loop playsinline preload="auto" aria-label="${r.t}"></video>`:`<img src="${r.s}" alt="${r.t}">`):`<div class="ph" id="rph">GIF</div>`)+`<button class="ar l" data-d="-1" aria-label="이전">‹</button><button class="ar r" data-d="1" aria-label="다음">›</button><div class="dts">${RIG.map((_,i)=>`<i class="${i==ri?'on':''}" data-i="${i}"></i>`).join('')}</div>`}
+$('#rl').innerHTML=RIG.map((x,i)=>`<button class="${i==ri?'on':''}" data-i="${i}"><small>RIG ${String(i+1).padStart(2,'0')}</small><b>${x.t}</b></button>`).join('');
+$('#rimg').innerHTML=mh(r.n,0,false)+`<button class="ar l" data-d="-1" aria-label="이전">‹</button><button class="ar r" data-d="1" aria-label="다음">›</button><div class="dts">${RIG.map((_,i)=>`<i class="${i==ri?'on':''}" data-i="${i}"></i>`).join('')}</div>`}
 function rigGo(n){ri=(n+RIG.length)%RIG.length;rigR()}
 $('#rl').onclick=e=>{const b=e.target.closest('button');if(b)rigGo(+b.dataset.i)};
 $('#rimg').onclick=e=>{const a=e.target.closest('.ar'),d=e.target.closest('.dts i');if(a)rigGo(ri+ +a.dataset.d);else if(d)rigGo(+d.dataset.i);else if(e.target.id=='rph'||e.target.tagName=='IMG'||e.target.tagName=='VIDEO')lb('rig')};
 $('#rimg').ontouchstart=e=>{rx=e.touches[0].clientX};
 $('#rimg').ontouchend=e=>{const dx=e.changedTouches[0].clientX-rx;if(Math.abs(dx)>40)rigGo(ri+(dx<0?1:-1))};
+$('#rinc').innerHTML=RIG.map(x=>`<div><b>${x.t}</b><span>${x.d}</span></div>`).join('');
 rigR();
 const FQ=['1. 방송 닉네임 / 플랫폼 / 데뷔 예정 시기','2. 캐릭터 특징','3. 요청 · 추가 문의 사항'],TA=[...document.querySelectorAll('.form textarea')];
 function upd(){TA.forEach((x,i)=>{const v=x.value.replace(/\s+/g,' ').trim();$('#qf'+i).textContent=v||'-'});}
