@@ -699,14 +699,15 @@ copyText(t).then(ok=>{$('#copy').textContent=ok?'복사됨':'복사 실패 · �
 function copyText(t){return new Promise(res=>{const fb=()=>{try{const b=$('#copy').getBoundingClientRect(),a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.cssText='position:fixed;left:0;width:1px;height:1px;opacity:0;pointer-events:none;top:'+Math.max(0,Math.round(b.top))+'px';document.body.appendChild(a);a.focus({preventScroll:true});a.select();a.setSelectionRange(0,t.length);const ok=document.execCommand('copy');document.body.removeChild(a);$('#copy').focus({preventScroll:true});res(!!ok)}catch(e){res(false)}};if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(()=>res(true),fb)}else fb()})}
 const NAV=['예약 슬롯','포트폴리오','작업과정','가격안내','리깅 포함 목록'];
 const IN=window.parent!==window;let VP=null,lastH=0;
-if(IN)$('#nav').style.display='none';/* 임베드 시 네비는 바깥(아트머그)에서 그려요 */
 const toY=y=>IN?parent.postMessage({t:'goul-scroll',y},'*'):scrollTo({top:y,behavior:'smooth'});
 const goH=l=>{const h=[...document.querySelectorAll('.hd')].find(x=>x.textContent.includes(l));if(!h)return;const z=parseFloat($('#page').style.zoom)||1;toY(Math.max(0,h.getBoundingClientRect().top+scrollY-32*z))};
 $('#nav').innerHTML='<ul>'+NAV.map(l=>`<li><button data-l="${l}" aria-label="${l}"><span>${l}</span></button></li>`).join('')+'</ul><button class="tp" aria-label="맨 위로">↑</button><button class="ap" data-l="가격안내">신청</button>';
 $('#nav').onclick=e=>{const b=e.target.closest('button[data-l]');if(b)goH(b.dataset.l);else if(e.target.closest('.tp'))toY(0)};
-let lastC=-1;function postNav(c,force){if(!IN||c<0)return;if(c===lastC&&!force)return;lastC=c;parent.postMessage({t:'goul-nav',labels:NAV,cur:c},'*')}
-function spy(){const hs=NAV.map(l=>[...document.querySelectorAll('.hd')].find(x=>x.textContent.includes(l)));let c=0;const ref=IN&&VP?VP.top+VP.h*.4:scrollY+innerHeight*.4;hs.forEach((h,i)=>{if(h&&h.getBoundingClientRect().top+scrollY<ref)c=i});document.querySelectorAll('#nav li button').forEach((b,i)=>b.classList.toggle('cur',i==c));postNav(c)}
+function spy(){const hs=NAV.map(l=>[...document.querySelectorAll('.hd')].find(x=>x.textContent.includes(l)));let c=0;const ref=IN&&VP?VP.top+VP.h*.4:scrollY+innerHeight*.4;hs.forEach((h,i)=>{if(h&&h.getBoundingClientRect().top+scrollY<ref)c=i});document.querySelectorAll('#nav li button').forEach((b,i)=>b.classList.toggle('cur',i==c))}
 addEventListener('scroll',spy,{passive:true});spy();
+/* 네비를 본문 영역 바로 바깥(오른쪽 여백)에 붙이기 — 여백이 모자라면 기존처럼 오른쪽 끝 */
+function placeNav(){const n=$('#nav');if(!n)return;if(matchMedia('(max-width:900px)').matches){n.style.left='';n.style.right='';return}const s=document.querySelector('#page > section')||$('#page');const r=s.getBoundingClientRect().right+scrollX;if(document.documentElement.clientWidth-r>=100){n.style.left=Math.round(r+24)+'px';n.style.right='auto'}else{n.style.left='';n.style.right=''}}
+placeNav();addEventListener('resize',placeNav);addEventListener('load',placeNav);setTimeout(placeNav,300);
 /* ===== 예약 슬롯 =====
    0 = 빈 슬롯(예약 가능) / 1 = 찬 슬롯(마감)
    [저장해 둔 '슬롯이 찼을 때' 디자인] 아래 값으로 바꾸면 이전 모습 그대로 나와요
@@ -718,16 +719,15 @@ render();fit();
 /* iframe 임베드(아트머그 등): 높이 전달 · 스크롤 요청 · 뷰포트 기준 위치 보정 */
 function postH(){if(!IN)return;const h=Math.ceil(Math.max($('#page').getBoundingClientRect().bottom,document.body.getBoundingClientRect().bottom)+scrollY);if(h&&h!==lastH){lastH=h;parent.postMessage({t:'goul-h',h},'*')}}
 function layVP(){if(!IN||!VP)return;const z=zf(),nav=$('#nav'),q=document.querySelector('.quote'),lb=$('#lb');
-
+{const mob=matchMedia('(max-width:900px)').matches;nav.style.position='absolute';nav.style.bottom='auto';nav.style.top=(VP.top+(mob?VP.h-72:VP.h/2))+'px';nav.style.transform=mob?'none':'translateY(-50%)'}placeNav();
 if(q){if(getComputedStyle(q).position==='static'){q.style.transform=''}else{const pr=q.parentElement.getBoundingClientRect(),qh=q.getBoundingClientRect().height,base=pr.top+scrollY,max=Math.max(0,pr.bottom+scrollY-qh-base),sh=Math.min(max,Math.max(0,VP.top+88*z-base));q.style.transform=sh>0?`translateY(${sh/z}px)`:''}}
 lb.style.position='absolute';lb.style.left='0';lb.style.right='0';lb.style.bottom='auto';lb.style.top=VP.top+'px';lb.style.height=VP.h+'px'}
 const zf=()=>parseFloat($('#page').style.zoom)||1;
 let navT;
 function navMove(){const n=$('#nav');n.classList.add('mv');clearTimeout(navT);navT=setTimeout(()=>n.classList.remove('mv'),140)}
-if(IN){addEventListener('message',e=>{if(e.source!==parent||!e.data)return;if(e.data.t==='goul-go'){goH(e.data.l);return}if(e.data.t==='goul-top'){toY(0);return}if(e.data.t!=='goul-vp')return;const prev=VP?VP.top:0;VP={top:+e.data.top||0,h:+e.data.h||innerHeight};if(VP.top!==prev&&VP.top>0)navMove();layVP();spy()});
+if(IN){addEventListener('message',e=>{if(e.source!==parent||!e.data||e.data.t!=='goul-vp')return;const prev=VP?VP.top:0;VP={top:+e.data.top||0,h:+e.data.h||innerHeight};if(VP.top!==prev&&VP.top>0)navMove();layVP();spy()});
 new ResizeObserver(()=>{postH();layVP()}).observe(document.body);
-new MutationObserver(()=>parent.postMessage({t:'goul-lb',open:!$('#lb').hidden},'*')).observe($('#lb'),{attributes:true,attributeFilter:['hidden']});
-addEventListener('resize',()=>setTimeout(()=>{postH();layVP()},60));addEventListener('load',()=>{postH()});setInterval(()=>{postH();postNav(lastC,true)},400);postH()}
+addEventListener('resize',()=>setTimeout(()=>{postH();layVP()},60));addEventListener('load',()=>{postH()});setInterval(postH,400);postH()}
 </script>
 </body>
 </html>
