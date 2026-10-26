@@ -512,6 +512,25 @@ section,.hd,.sl,.port,.price,.bk,.inc,.foot{min-width:0;max-width:100%}
   .hi,.btns{position:relative;z-index:2;margin-left:auto;width:46%;max-width:46%}
   .cw{left:clamp(8px,3vw,40px);height:clamp(340px,40vw,500px)}
 }
+/* ===== 우측 플로팅 네비 ===== */
+.hero{margin-top:16px}
+.nav{position:fixed;top:50%;right:16px;left:auto;bottom:auto;transform:translateY(-50%);z-index:60;width:52px;height:auto;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 0;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--card) 88%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 10px 30px rgba(13,15,20,.12)}
+.nav ul{display:flex;flex-direction:column;align-items:center;gap:2px;margin:0;padding:0;list-style:none}
+.nav li button{position:relative;display:flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;border-radius:50%}
+.nav li button:after{display:none}
+.nav li button:before{content:"";width:10px;height:10px;border-radius:50%;background:#c9ced9;transition:transform .25s var(--ease),background-color .25s var(--ease)}
+.nav li button:hover:before{background:var(--blue)}
+.nav li button.cur:before{background:var(--blue);transform:scale(1.5)}
+.nav li button span{position:absolute;right:calc(100% + 12px);top:50%;transform:translate(6px,-50%);opacity:0;pointer-events:none;white-space:nowrap;padding:8px 14px;border-radius:999px;background:#0d0f14;color:#fff;font-size:13px;font-weight:700;transition:opacity .2s var(--ease),transform .2s var(--ease)}
+.nav li button:hover span,.nav li button:focus-visible span{opacity:1;transform:translate(0,-50%)}
+.nav .tp{width:36px;height:36px;border-radius:50%;font-size:18px;font-weight:700;color:var(--sub)}
+.nav .tp:hover{background:var(--blue-l);color:var(--blue)}
+.nav .ap{width:40px;height:40px;padding:0;border-radius:50%;font-size:13px}
+@media (max-width:900px){
+.nav{top:auto;bottom:calc(16px + env(safe-area-inset-bottom,0px));right:16px;transform:none;width:auto;padding:0;border:0;border-radius:0;background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+.nav ul,.nav .tp{display:none}
+.nav .ap{width:56px;height:56px;font-size:14px;box-shadow:0 8px 24px rgba(39,98,255,.4)}
+}
 </style>
 </head>
 <body>
@@ -529,12 +548,7 @@ section,.hd,.sl,.port,.price,.bk,.inc,.foot{min-width:0;max-width:100%}
 <div class="sl-l"><small>OPEN EVENT · 20% OFF</small><h3>현황 안내</h3>
 <div class="sl-lg"><span><i class="sd"></i>예약가능</span><span><i class="sd f"></i>예약마감</span></div>
 <p>현재의 예약 현황을 확인하실 수 있습니다.<br>문의하시기 전에 가능한 일정부터 살펴봐 주세요.</p></div>
-<div class="sl-r"><ul>
-<li class="ok"><b>11월</b><span class="sds"><i class="sd"></i><i class="sd"></i></span><em>예약 가능</em></li>
-<li class="ok"><b>12월</b><span class="sds"><i class="sd f"></i><i class="sd"></i></span><em>예약 가능</em></li>
-<li><b>1월</b><span class="sds"><i class="sd f"></i></span><em>마감</em></li>
-<li><b>2월</b><span class="sds"><i class="sd f"></i></span><em>마감</em></li>
-</ul><p class="sl-n">* 예약 현황은 수시로 바뀔 수 있습니다.</p></div>
+<div class="sl-r"><ul id="slotul"></ul><p class="sl-n">* 예약 현황은 수시로 바뀔 수 있습니다.</p></div>
 </div></section>
 
 <section id="port"><div class="hd"><h2><sup>02</sup>포트폴리오</h2><span>PORTFOLIO</span></div>
@@ -607,20 +621,21 @@ $('#lb').ontouchstart=e=>{lx=e.touches[0].clientX};
 $('#lb').ontouchend=e=>{const dx=e.changedTouches[0].clientX-lx;if(Math.abs(dx)>50)lbGo(dx<0?1:-1)};
 addEventListener('keydown',e=>{if($('#lb').hidden)return;if(e.key=='Escape')lbx();else if(e.key=='ArrowLeft')lbGo(-1);else if(e.key=='ArrowRight')lbGo(1)});
 const DC=.2,fmt=n=>n.toLocaleString('en-US')+'원';
-const plans=[{n:'전신 일러스트 + 리깅',p:1450000,l:'1,450,000원',t:'일러스트 + 리깅',s:'기본 표정 4종 제작 + 리깅 포함'},{n:'흉상 일러스트 + 리깅',p:1250000,l:'1,250,000원',t:'일러스트 + 리깅',s:'기본 표정 4종 제작 + 리깅 포함'},{n:'전신 일러스트',p:800000,l:'800,000원',t:'전신 일러스트',s:'기본 표정 4종 제작'},{n:'흉상 일러스트',p:700000,l:'700,000원',t:'흉상 일러스트',s:'기본 표정 4종 제작'}];
-const opts=[{n:'디자인 시안 추가',d:'1종 기준',p:50000,l:'50,000원'},
-{n:'컨펌 추가',d:'1회 기준',p:10000,l:'10,000원'},
+const plans=[{n:'전신 일러스트 + 리깅',p:1350000,l:'1,350,000원',t:'일러스트 + 리깅',s:'기본 표정 4종 제작 + 리깅 포함'},{n:'흉상 일러스트 + 리깅',p:1250000,l:'1,250,000원',t:'일러스트 + 리깅',s:'기본 표정 4종 제작 + 리깅 포함'},{n:'전신 일러스트',p:750000,l:'750,000원',t:'전신 일러스트',s:'기본 표정 4종 제작'},{n:'흉상 일러스트',p:650000,l:'650,000원',t:'흉상 일러스트',s:'기본 표정 4종 제작'}];
+const opts=[{n:'디자인 시안 추가',d:'러프 시안 기준 · 최대 3개',p:60000,l:'60,000원',max:3},
+{n:'컨펌 추가',d:'1회 기준',p:30000,l:'30,000원'},
 {n:'표정 추가',d:'파츠 분리 포함',p:40000,l:'40,000원'},
-{n:'볼빵빵 / 혀',d:'',p:10000,l:'10,000원'},
-{n:'신헤어 추가',d:'리깅 포함 기준',p:80000,l:'80,000원'},
-{n:'손 포즈',d:'소품 없는 손 포즈',p:65000,l:'65,000원'},
+{n:'볼빵빵',d:'',p:10000,l:'10,000원'},
+{n:'혀',d:'',p:10000,l:'10,000원'},
+{n:'신헤어 추가',d:'',p:80000,l:'80,000원'},
+{n:'손 포즈',d:'소품 없는 손 포즈',p:70000,l:'70,000원'},
 {n:'소품, 손 추가',d:'게임패드, 마이크를 쥐고 있는 손 등',p:100000,l:'100,000원'},
-{n:'신의상 추가 · 전신',d:'리깅 포함 기준',p:350000,l:'350,000원'},
-{n:'신의상 추가 · 상체',d:'리깅 포함 기준',p:200000,l:'200,000원'},
+{n:'신의상 추가 · 전신',d:'',p:350000,l:'350,000원'},
+{n:'신의상 추가 · 상체',d:'',p:200000,l:'200,000원'},
 {n:'장식 추가',d:'장식 / 동물귀 / 뿔 / 꼬리 등',p:60000,l:'60,000원'},
 {n:'비대칭 포즈 / 디자인',d:'',p:110000,l:'110,000원'},
 {n:'삼면도 추가',d:'단색 기준',p:250000,l:'250,000원'},
-{n:'복잡한 디자인 · 의상 추가금',d:'디자인 확인 후 적용 여부 안내',p:100000,l:'100,000원'},
+{n:'복잡한 디자인 · 의상 추가금',d:'디자인 확인 후 적용 여부 안내',p:50000,l:'50,000원~',tg:1},
 {n:'저작권 구매 (개인세)',d:'개인세 필수 · 양도 계약서 작성',p:300000,l:'300,000원',tg:1},
 {n:'데뷔 이후 비공개',d:'데뷔 후 6개월 기준',p:100000,l:'100,000원',tg:1},
 {n:'기업세',d:'저작권 구매 필수 · 할인 후 기본 금액 기준 +30%',p:0,l:'+30%',pct:.3},
@@ -634,7 +649,7 @@ let t,b,a;
 if(!touched){t='일러스트';b=80000;a=10000}else{t=plans[cur].n;b=plans[cur].p;a=[...sel].reduce((s,[i,n])=>s+opts[i].p*n,0)}
 $('#qt').textContent=t;const dc=Math.round(b*DC),cp=[...sel].reduce((s,[i])=>s+(opts[i].pct?Math.round((b-dc)*opts[i].pct):0),0);$('#qb').textContent=won(b);$('#qd').textContent='-'+won(dc);$('#qc').textContent=cp?'+'+won(cp):'-';$('#qo').textContent=won(a);$('#qs').textContent=won(b-dc+cp+a)}
 $('#cards').onclick=e=>{const b=e.target.closest('.pc');if(b){touched=true;cur=+b.dataset.i;render()}};
-$('#opts').onclick=e=>{const r=e.target.closest('.opt');if(!r)return;const i=+r.dataset.i,o=opts[i],n=sel.get(i)||0,a=e.target.closest('button[data-a]');let k;if(o.p===0||o.tg)k=n?0:1;else if(a)k=Math.max(0,Math.min(20,n+ +a.dataset.a));else if(!n)k=1;else return;if(i==CI&&!k&&sel.has(EI))return;touched=true;k?sel.set(i,k):sel.delete(i);if(i==EI&&k)sel.set(CI,1);render()};
+$('#opts').onclick=e=>{const r=e.target.closest('.opt');if(!r)return;const i=+r.dataset.i,o=opts[i],n=sel.get(i)||0,a=e.target.closest('button[data-a]');let k;if(o.p===0||o.tg)k=n?0:1;else if(a)k=Math.max(0,Math.min(o.max||20,n+ +a.dataset.a));else if(!n)k=1;else return;if(i==CI&&!k&&sel.has(EI))return;touched=true;k?sel.set(i,k):sel.delete(i);if(i==EI&&k)sel.set(CI,1);render()};
 
 const B=(t,l,c)=>`<div class="bc"><h4>${t}</h4>${l.map(x=>x[0]=='#'?`<p class="n">${x.slice(1)}</p>`:x[0]=='!'?`<p class="s">${x.slice(1)}</p>`:x[0]=='-'?`<p class="i${c?' '+c:''}">${x.slice(1).replace(/(\d+%)/g,'<b>$1</b>')}</p>`:`<p>${x}</p>`).join('')}</div>`;
 const SEC=[
@@ -685,20 +700,29 @@ function copyText(t){return new Promise(res=>{const fb=()=>{try{const b=$('#copy
 const NAV=['예약 슬롯','포트폴리오','작업과정','가격안내','리깅 포함 목록'];
 const IN=window.parent!==window;let VP=null,lastH=0;
 const toY=y=>IN?parent.postMessage({t:'goul-scroll',y},'*'):scrollTo({top:y,behavior:'smooth'});
-const goH=l=>{const h=[...document.querySelectorAll('.hd')].find(x=>x.textContent.includes(l));if(!h)return;const z=parseFloat($('#page').style.zoom)||1;toY(Math.max(0,h.getBoundingClientRect().top+scrollY-96*z))};
-$('#nav').innerHTML=document.querySelector('.hero .logo').outerHTML.replace('class="logo"','class="nl"')+'<ul>'+NAV.map(l=>`<li><button data-l="${l}">${l}</button></li>`).join('')+'</ul><button class="ap" data-l="가격안내">신청하기</button>';
-$('#nav').onclick=e=>{const b=e.target.closest('button[data-l]');if(b)goH(b.dataset.l);else if(e.target.closest('.nl'))toY(0)};
+const goH=l=>{const h=[...document.querySelectorAll('.hd')].find(x=>x.textContent.includes(l));if(!h)return;const z=parseFloat($('#page').style.zoom)||1;toY(Math.max(0,h.getBoundingClientRect().top+scrollY-32*z))};
+$('#nav').innerHTML='<ul>'+NAV.map(l=>`<li><button data-l="${l}" aria-label="${l}"><span>${l}</span></button></li>`).join('')+'</ul><button class="tp" aria-label="맨 위로">↑</button><button class="ap" data-l="가격안내">신청</button>';
+$('#nav').onclick=e=>{const b=e.target.closest('button[data-l]');if(b)goH(b.dataset.l);else if(e.target.closest('.tp'))toY(0)};
+function spy(){const hs=NAV.map(l=>[...document.querySelectorAll('.hd')].find(x=>x.textContent.includes(l)));let c=0;const ref=IN&&VP?VP.top+VP.h*.4:scrollY+innerHeight*.4;hs.forEach((h,i)=>{if(h&&h.getBoundingClientRect().top+scrollY<ref)c=i});document.querySelectorAll('#nav li button').forEach((b,i)=>b.classList.toggle('cur',i==c))}
+addEventListener('scroll',spy,{passive:true});spy();
+/* ===== 예약 슬롯 =====
+   0 = 빈 슬롯(예약 가능) / 1 = 찬 슬롯(마감)
+   [저장해 둔 '슬롯이 찼을 때' 디자인] 아래 값으로 바꾸면 이전 모습 그대로 나와요
+   const SLOTS=[['11월',[0,0]],['12월',[1,0]],['1월',[1]],['2월',[1]]];
+   한 달 슬롯이 전부 1이면 자동으로 '마감'(회색 줄), 하나라도 0이면 '예약 가능'(파란 줄) */
+const SLOTS=[['11월',[0,0]],['12월',[0,0]],['1월',[0]],['2월',[0]]];
+$('#slotul').innerHTML=SLOTS.map(([m,s])=>{const ok=s.includes(0);return `<li${ok?' class="ok"':''}><b>${m}</b><span class="sds">${s.map(v=>`<i class="sd${v?' f':''}"></i>`).join('')}</span><em>${ok?'예약 가능':'마감'}</em></li>`}).join('');
 render();fit();
 /* iframe 임베드(아트머그 등): 높이 전달 · 스크롤 요청 · 뷰포트 기준 위치 보정 */
 function postH(){if(!IN)return;const h=Math.ceil(Math.max($('#page').getBoundingClientRect().bottom,document.body.getBoundingClientRect().bottom)+scrollY);if(h&&h!==lastH){lastH=h;parent.postMessage({t:'goul-h',h},'*')}}
 function layVP(){if(!IN||!VP)return;const z=zf(),nav=$('#nav'),q=document.querySelector('.quote'),lb=$('#lb');
-nav.style.transform=VP.top>0?`translateY(${VP.top/z}px)`:'';
+{const mob=matchMedia('(max-width:900px)').matches;nav.style.position='absolute';nav.style.bottom='auto';nav.style.top=(VP.top+(mob?VP.h-72:VP.h/2))+'px';nav.style.transform=mob?'none':'translateY(-50%)'}
 if(q){if(getComputedStyle(q).position==='static'){q.style.transform=''}else{const pr=q.parentElement.getBoundingClientRect(),qh=q.getBoundingClientRect().height,base=pr.top+scrollY,max=Math.max(0,pr.bottom+scrollY-qh-base),sh=Math.min(max,Math.max(0,VP.top+88*z-base));q.style.transform=sh>0?`translateY(${sh/z}px)`:''}}
 lb.style.position='absolute';lb.style.left='0';lb.style.right='0';lb.style.bottom='auto';lb.style.top=VP.top+'px';lb.style.height=VP.h+'px'}
 const zf=()=>parseFloat($('#page').style.zoom)||1;
 let navT;
 function navMove(){const n=$('#nav');n.classList.add('mv');clearTimeout(navT);navT=setTimeout(()=>n.classList.remove('mv'),140)}
-if(IN){addEventListener('message',e=>{if(e.source!==parent||!e.data||e.data.t!=='goul-vp')return;const prev=VP?VP.top:0;VP={top:+e.data.top||0,h:+e.data.h||innerHeight};if(VP.top!==prev&&VP.top>0)navMove();layVP()});
+if(IN){addEventListener('message',e=>{if(e.source!==parent||!e.data||e.data.t!=='goul-vp')return;const prev=VP?VP.top:0;VP={top:+e.data.top||0,h:+e.data.h||innerHeight};if(VP.top!==prev&&VP.top>0)navMove();layVP();spy()});
 new ResizeObserver(()=>{postH();layVP()}).observe(document.body);
 addEventListener('resize',()=>setTimeout(()=>{postH();layVP()},60));addEventListener('load',()=>{postH()});setInterval(postH,400);postH()}
 </script>
