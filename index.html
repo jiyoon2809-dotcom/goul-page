@@ -627,7 +627,7 @@ const ol=o=>o.p===0?o.l:op(o).toLocaleString('en-US')+'원'+(o.m?'~':'');
 const CI=opts.findIndex(o=>o.n.startsWith('저작권 구매')),EI=opts.findIndex(o=>o.pct);
 let cur=0,sel=new Map(),touched=true;
 function render(){
-$('#od').innerHTML=(isRig()?'<b>현재 「일러스트 + 리깅」 기준 금액</b>이 표시됩니다.':'<b>현재 「일러스트」 기준 금액</b>이 표시됩니다.')+'<br>같은 옵션이라도 일러스트만 의뢰하시면 그림 작업까지만 포함되고, 리깅을 함께 의뢰하시면 파츠 분리·모션 세팅·물리효과까지 포함되어 금액이 달라집니다. 선택하신 요금제에 따라 자동으로 적용되며, 디자인 난이도에 따라 금액이 달라질 수 있습니다. 추가 옵션은 오픈 기념 할인 대상이 아닙니다.';
+$('#od').style.display=isRig()?'':'none';$('#od').innerHTML=isRig()?'<b>현재 「일러스트 + 리깅」 기준 금액</b>이 표시됩니다.<br>리깅 작업이 포함된 요금제 기준으로 추가 옵션 금액이 적용됩니다. 디자인 난이도에 따라 금액이 달라질 수 있으며, 추가 옵션은 오픈 기념 할인 대상이 아닙니다.':'';
 $('#cards').innerHTML=plans.map((p,i)=>`<button class="pc${i==cur?' on':''}" data-i="${i}"><b>${p.n}<i class="tag">20% OFF</i></b><strong><s>${p.l}</s>${fmt(Math.round(p.p*(1-DC)))}</strong><small>${p.s||'캐릭터 디자인 포함 + 기본 표정 4종 제작'}</small></button>`).join('');
 $('#opts').innerHTML=opts.map((o,i)=>{const n=sel.get(i)||0,fx=o.p===0||o.tg,pr=!fx&&n>1?(op(o)*n).toLocaleString('en-US')+'원':ol(o);return `<div class="opt${fx?' tg':''}${n?' on':''}" data-i="${i}"><b>${o.n}${o.d?`<em>${o.d}</em>`:''}</b><span>${pr}</span>${fx?'':`<div class="stp"><button type="button" data-a="-1" aria-label="수량 감소">−</button><output>${n}</output><button type="button" data-a="1" aria-label="수량 증가">+</button></div>`}</div>`}).join('');
 let t,b,a;
