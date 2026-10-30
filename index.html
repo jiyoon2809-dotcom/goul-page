@@ -670,7 +670,7 @@ $('#rimg').onclick=e=>{const a=e.target.closest('.ar'),d=e.target.closest('.dts 
 $('#rimg').addEventListener('touchstart',e=>{rx=e.touches[0].clientX},{passive:true});
 $('#rimg').addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-rx;if(Math.abs(dx)>40)rigGo(ri+(dx<0?1:-1))},{passive:true});
 const RIG_TEXT=[
-{t:'얼굴/몸 XYZ축',d:'얼굴/몸 XYZ축 최대 45도까지 움직일 수 있습니다.'},
+{t:'얼굴/몸 XYZ축',d:'최대 45도까지 움직일 수 있습니다.'},
 {t:'얼굴 페이셜',d:'눈썹 상하 이동 · 변형 (화남 / 슬픔)<br>눈 깜빡임 · 눈 미소<br>입 모양 12점'},
 {t:'기본 표정 4종',d:'발그레 / 정색<br>하트눈 / 반짝눈'},
 {t:'물리효과',d:'머리카락 / 눈(표정) / 의상<br>가슴 / 장식 / 호흡'}
