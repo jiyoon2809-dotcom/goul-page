@@ -617,12 +617,25 @@ async function pfProbe(group,num){
   return new Promise(resolve=>{
     const media=group.kind==='video'?document.createElement('video'):new Image();
     let settled=false;
-    const done=ok=>{if(settled)return;settled=true;resolve(ok?item:null)};
-    media.onloadeddata=()=>done(true);
-    media.onload=()=>done(true);
+    const done=ok=>{
+      if(settled)return;
+      settled=true;
+      media.onload=null;
+      media.onerror=null;
+      media.onloadedmetadata=null;
+      media.onloadeddata=null;
+      resolve(ok?item:null);
+    };
     media.onerror=()=>done(false);
-    if(group.kind==='video'){media.preload='metadata';media.src=item.s;media.load()}
-    else media.src=item.s;
+    if(group.kind==='video'){
+      media.preload='metadata';
+      media.onloadedmetadata=()=>done(true);
+      media.src=item.s;
+      media.load();
+    }else{
+      media.onload=()=>done(true);
+      media.src=item.s;
+    }
   });
 }
 async function pfLoad(){
