@@ -603,38 +603,55 @@ $('#lb').addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-lx
 addEventListener('keydown',e=>{if($('#lb').hidden)return;if(e.key=='Escape')lbx();else if(e.key=='ArrowLeft')lbGo(-1);else if(e.key=='ArrowRight')lbGo(1)});
 const DC=.2,fmt=n=>n.toLocaleString('en-US')+'원';
 const plans=[{n:'전신 일러스트 + 리깅',p:1450000,l:'1,450,000원',t:'일러스트 + 리깅',s:'캐릭터 디자인 포함 + 기본 표정 4종 제작 + 리깅 포함 +VBridger'},{n:'흉상 일러스트 + 리깅',p:1350000,l:'1,350,000원',t:'일러스트 + 리깅',s:'캐릭터 디자인 포함 + 기본 표정 4종 제작 + 리깅 포함 +VBridger'},{n:'전신 일러스트',p:850000,l:'850,000원',t:'전신 일러스트',s:'캐릭터 디자인 포함 + 기본 표정 4종 제작'},{n:'흉상 일러스트',p:750000,l:'750,000원',t:'흉상 일러스트',s:'캐릭터 디자인 포함 + 기본 표정 4종 제작'}];
-const opts=[{n:'디자인 시안 추가',d:'러프 시안 기준 · 최대 3개',p:70000,max:3},
-{n:'컨펌 추가',d:'1회 기준',p:30000,r:40000},
-{n:'표정 추가',d:'일러스트: 파츠 분리 포함 / 리깅: 표정 모션 세팅 포함',p:40000,r:70000},
-{n:'볼빵빵',d:'리깅 시 볼 부풀림 모션 포함',p:10000,r:30000},
-{n:'혀',d:'리깅 시 입 모양 연동 모션 포함',p:10000,r:40000},
-{n:'신헤어 추가',d:'리깅 시 물리효과 포함',p:80000,r:150000},
-{n:'손 포즈',d:'소품 없는 손 포즈',p:70000,r:120000},
-{n:'소품, 손 추가',d:'게임패드, 마이크를 쥐고 있는 손 등',p:100000,r:180000},
-{n:'신의상 추가 · 전신',d:'리깅 시 의상 파츠 분리 + 물리효과 포함',p:350000,r:550000},
-{n:'신의상 추가 · 상체',d:'리깅 시 의상 파츠 분리 + 물리효과 포함',p:200000,r:330000},
-{n:'장식 추가',d:'장식 / 동물귀 / 뿔 / 꼬리 등 (리깅 시 움직임 포함)',p:60000,r:110000},
-{n:'비대칭 포즈 / 디자인',d:'',p:110000,r:190000},
-{n:'삼면도 추가',d:'단색 기준',p:250000},
-{n:'복잡한 디자인 · 의상 추가금',d:'디자인 확인 후 적용 여부 안내',p:50000,r:80000,m:1,tg:1},
+const illustOpts=[
+{n:'추가 디자인 시안',d:'',p:60000,max:3},
+{n:'추가 표정',d:'',p:50000},
+{n:'베이스 바디 추가',d:'',p:150000},
+{n:'신의상 추가',d:'',p:300000},
+{n:'신 헤어',d:'',p:250000},
+{n:'복잡한 장식',d:'',p:60000,m:1},
+{n:'팔/손 포즈 추가',d:'',p:100000,m:1},
+{n:'비대칭 포즈 및 디자인',d:'',p:200000,m:1},
+{n:'복잡한 디자인',d:'',p:200000,m:1},
+{n:'삼면도',d:'',p:300000}
+];
+const rigOpts=[
+{n:'표정',d:'',p:20000},
+{n:'VBridger',d:'',p:300000},
+{n:'볼빵빵 + 오물오물',d:'',p:60000},
+{n:'혀',d:'',p:100000},
+{n:'팔 포즈 추가',d:'',p:100000,m:1},
+{n:'ON/OFF 의상',d:'',p:200000},
+{n:'장식 및 소품',d:'',p:60000,m:1},
+{n:'동물 귀',d:'',p:100000},
+{n:'SD/MD화',d:'',p:250000,m:1},
+{n:'다가오기',d:'',p:300000,m:1},
+{n:'눈동자 개별 움직임',d:'',p:50000,m:1},
+{n:'신 헤어',d:'',p:250000},
+{n:'신의상 추가',d:'',p:200000}
+];
+const adminOpts=[
 {n:'저작권 구매 (개인세)',d:'개인세 필수 · 양도 계약서 작성',p:300000,tg:1},
 {n:'데뷔 이후 비공개',d:'데뷔 후 6개월 기준',p:100000,tg:1},
 {n:'기업세',d:'저작권 구매 필수 · 할인 후 기본 금액 기준 +30%',p:0,l:'+30%',pct:.3},
-{n:'빠른 마감',d:'',p:0,l:'별도 협의'}];
+{n:'빠른 마감',d:'',p:0,l:'별도 협의'}
+];
+let opts=[...rigOpts,...adminOpts];
 const isRig=()=>plans[cur].t==='일러스트 + 리깅';
 const op=o=>isRig()&&o.r!=null?o.r:o.p;
 const ol=o=>o.p===0?o.l:op(o).toLocaleString('en-US')+'원'+(o.m?'~':'');
-const CI=opts.findIndex(o=>o.n.startsWith('저작권 구매')),EI=opts.findIndex(o=>o.pct);
+const CI=()=>opts.findIndex(o=>o.n.startsWith('저작권 구매')),EI=()=>opts.findIndex(o=>o.pct);
 let cur=0,sel=new Map(),touched=true;
 function render(){
+opts=[...(isRig()?rigOpts:illustOpts),...adminOpts];
 $('#od').style.display=isRig()?'':'none';$('#od').innerHTML=isRig()?'<b>현재 「일러스트 + 리깅」 기준 금액</b>이 표시됩니다.<br>리깅 작업이 포함된 요금제 기준으로 추가 옵션 금액이 적용됩니다. 디자인 난이도에 따라 금액이 달라질 수 있으며, 추가 옵션은 오픈 기념 할인 대상이 아닙니다.':'';
 $('#cards').innerHTML=plans.map((p,i)=>`<button class="pc${i==cur?' on':''}" data-i="${i}"><b>${p.n}<i class="tag">20% OFF</i></b><strong><s>${p.l}</s>${fmt(Math.round(p.p*(1-DC)))}</strong><small>${p.s||'캐릭터 디자인 포함 + 기본 표정 4종 제작'}</small></button>`).join('');
 $('#opts').innerHTML=opts.map((o,i)=>{const n=sel.get(i)||0,fx=o.p===0||o.tg,pr=!fx&&n>1?(op(o)*n).toLocaleString('en-US')+'원':ol(o);return `<div class="opt${fx?' tg':''}${n?' on':''}" data-i="${i}"><b>${o.n}${o.d?`<em>${o.d}</em>`:''}</b><span>${pr}</span>${fx?'':`<div class="stp"><button type="button" data-a="-1" aria-label="수량 감소">−</button><output>${n}</output><button type="button" data-a="1" aria-label="수량 증가">+</button></div>`}</div>`}).join('');
 let t,b,a;
 if(!touched){t='일러스트';b=80000;a=10000}else{t=plans[cur].n;b=plans[cur].p;a=[...sel].reduce((s,[i,n])=>s+op(opts[i])*n,0)}
 $('#qt').textContent=t;const dc=Math.round(b*DC),cp=[...sel].reduce((s,[i])=>s+(opts[i].pct?Math.round((b-dc)*opts[i].pct):0),0);$('#qb').textContent=won(b);$('#qd').textContent='-'+won(dc);$('#qc').textContent=cp?'+'+won(cp):'-';$('#qo').textContent=won(a);$('#qs').textContent=won(b-dc+cp+a);$('#qol').innerHTML=optList().map(x=>`<div class="oi${x.fx?' fx':''}"><span>${x.n}${x.q>1?`<em>x${x.q}</em>`:''}</span><b>${x.pr}</b></div>`).join('')}
-$('#cards').onclick=e=>{const b=e.target.closest('.pc');if(b){touched=true;cur=+b.dataset.i;render()}};
-$('#opts').onclick=e=>{const r=e.target.closest('.opt');if(!r)return;const i=+r.dataset.i,o=opts[i],n=sel.get(i)||0,a=e.target.closest('button[data-a]');let k;if(o.p===0||o.tg)k=n?0:1;else if(a)k=Math.max(0,Math.min(o.max||20,n+ +a.dataset.a));else if(!n)k=1;else return;if(i==CI&&!k&&sel.has(EI))return;touched=true;k?sel.set(i,k):sel.delete(i);if(i==EI&&k)sel.set(CI,1);render()};
+$('#cards').onclick=e=>{const b=e.target.closest('.pc');if(b){touched=true;cur=+b.dataset.i;sel.clear();render()}};
+$('#opts').onclick=e=>{const r=e.target.closest('.opt');if(!r)return;const i=+r.dataset.i,o=opts[i],n=sel.get(i)||0,a=e.target.closest('button[data-a]');let k;if(o.p===0||o.tg)k=n?0:1;else if(a)k=Math.max(0,Math.min(o.max||20,n+ +a.dataset.a));else if(!n)k=1;else return;if(i==CI()&&!k&&sel.has(EI()))return;touched=true;k?sel.set(i,k):sel.delete(i);if(i==EI()&&k)sel.set(CI(),1);render()};
 
 const B=(t,l,c)=>`<div class="bc"><h4>${t}</h4>${l.map(x=>x[0]=='#'?`<p class="n">${x.slice(1)}</p>`:x[0]=='!'?`<p class="s">${x.slice(1)}</p>`:x[0]=='-'?`<p class="i${c?' '+c:''}">${x.slice(1).replace(/(\d+%)/g,'<b>$1</b>')}</p>`:`<p>${x}</p>`).join('')}</div>`;
 const SEC=[
